@@ -4,14 +4,9 @@ const dotenv = require("dotenv");
 const cors =require('cors');
 dotenv.config()
 const app = express();
-app.use(cors())
+app.use(cors());
+app.use(express.json());
 const port = process.env.PORT || 9090
-
-
-
-
-
-
 
 
 
@@ -28,6 +23,13 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect();
+    const db = client.db("idea_vault");
+    const ideasCollection = db.collection("ideas")
+
+    app.get("/ideas" ,async (req ,res )=>{
+      const result = await ideasCollection.find().toArray();
+      res.send(result)
+    })
 
 
 
