@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const dotenv = require("dotenv");
 const cors =require('cors');
 dotenv.config()
@@ -29,6 +29,16 @@ async function run() {
     app.get("/ideas" ,async (req ,res )=>{
       const result = await ideasCollection.find().toArray();
       res.send(result)
+    });
+    app.get("/ideas/:ideaId" ,async (req ,res )=>{
+      const {ideaId} = req.params;
+      const result = await ideasCollection.findOne({_id :new ObjectId(ideaId)})
+      res.send(result)
+    })
+    app.post("/ideas" , async (req ,res) =>{
+      const ideasData = req.body;
+      const result = await ideasCollection.insertOne(ideasData);
+      res.send(result);
     })
 
 
