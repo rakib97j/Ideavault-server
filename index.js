@@ -26,15 +26,24 @@ async function run() {
     const db = client.db("idea_vault");
     const ideasCollection = db.collection("ideas")
 
+    // show trending data in Home Page 
+    app.get("/trending" , async (req ,res)=>{
+      const result =await ideasCollection.find().limit(6).toArray();
+      res.send(result)
+    })
+    // main Api
     app.get("/ideas" ,async (req ,res )=>{
       const result = await ideasCollection.find().toArray();
       res.send(result)
     });
+    
+    // details Api
     app.get("/ideas/:ideaId" ,async (req ,res )=>{
       const {ideaId} = req.params;
       const result = await ideasCollection.findOne({_id :new ObjectId(ideaId)})
       res.send(result)
     })
+    // add Data Api
     app.post("/ideas" , async (req ,res) =>{
       const ideasData = req.body;
       const result = await ideasCollection.insertOne(ideasData);
@@ -58,7 +67,7 @@ run().catch(console.dir);
 
 
 app.get("/", (req, res) => {
-  res.send("hey");
+  res.send("ki re emran BKSC");
 });
 
 app.listen(port, () => {
