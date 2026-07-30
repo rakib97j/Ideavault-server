@@ -36,6 +36,23 @@ async function run() {
       const result = await ideasCollection.find().toArray();
       res.send(result)
     });
+    // search and short Api
+   app.get("/idea", async (req, res) => {
+  const search = req.query.search?.trim();
+
+  const query = {};
+
+  if (search) {
+    query.$or = [
+      { title: { $regex: search, $options: "i" } },
+      { category: { $regex: search, $options: "i" } },
+    ];
+  }
+
+  const result = await ideasCollection.find(query).toArray();
+
+  res.send(result);
+});
     
     // details Api
     app.get("/ideas/:ideaId" ,async (req ,res )=>{
@@ -67,7 +84,7 @@ run().catch(console.dir);
 
 
 app.get("/", (req, res) => {
-  res.send("ki re emran BKSC");
+  res.send("HLWWW");
 });
 
 app.listen(port, () => {
