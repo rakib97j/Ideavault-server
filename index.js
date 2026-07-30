@@ -33,7 +33,9 @@ async function run() {
     })
     // main Api
     app.get("/ideas" ,async (req ,res )=>{
-      const result = await ideasCollection.find().toArray();
+      const userId = req.query.userId;
+      const query = userId ? { userId: userId } : {};
+      const result = await ideasCollection.find(query).toArray();
       res.send(result)
     });
     // search and short Api
