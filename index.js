@@ -25,6 +25,7 @@ async function run() {
     await client.connect();
     const db = client.db("idea_vault");
     const ideasCollection = db.collection("ideas")
+    const commentCollection = db.collection('comment')
 
     // show trending data in Home Page 
     app.get("/trending" , async (req ,res)=>{
@@ -74,6 +75,15 @@ async function run() {
       const ideasData = req.body;
       const result = await ideasCollection.insertOne(ideasData);
       res.send(result);
+    })
+
+    // comment Api 
+
+    // post api 
+    app.post('/comment', async (req ,res)=>{
+      const commentData =req.body;
+      const result = await commentCollection.insertOne(commentData)
+      res.send(result)
     })
 
 
