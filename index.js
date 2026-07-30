@@ -31,13 +31,20 @@ async function run() {
       const result =await ideasCollection.find().limit(6).toArray();
       res.send(result)
     })
-    // main Api
+    // main Api with my idea 
     app.get("/ideas" ,async (req ,res )=>{
       const userId = req.query.userId;
       const query = userId ? { userId: userId } : {};
       const result = await ideasCollection.find(query).toArray();
-      res.send(result)
+      res.send(result);
     });
+    // user My idea delete
+    app.delete("/ideas/:id", async (req, res) => {
+    const { id } = req.params;
+    const result = await ideasCollection.deleteOne({_id :new ObjectId(id)});
+
+    res.send(result);
+});
     // search and short Api
    app.get("/idea", async (req, res) => {
   const search = req.query.search?.trim();
