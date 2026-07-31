@@ -45,7 +45,7 @@ async function run() {
     const result = await ideasCollection.deleteOne({_id :new ObjectId(id)});
 
     res.send(result);
-});
+    });
     // search and short Api
    app.get("/idea", async (req, res) => {
   const search = req.query.search?.trim();
@@ -97,9 +97,19 @@ async function run() {
       res.send(result)
     })
     // my-Comment api
+    
     app.get('/my-comment/:userId' , async (req ,res ) => {
       const {userId} = req.params;
       const result = await commentCollection.find({userId :userId}).toArray()
+      res.send(result)
+    })
+
+
+  //  comment delete api 
+
+    app.delete("/comment/:id" , async (req , res )=>{
+      const {id} = req.params;
+      const result = await commentCollection.deleteOne({_id :new ObjectId(id)}) ;
       res.send(result)
     })
 
