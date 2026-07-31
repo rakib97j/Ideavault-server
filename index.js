@@ -87,14 +87,13 @@ async function run() {
     })
 
     // comment get api 
-    app.get('/comment' , async (req ,res ) => {
-      const result = await commentCollection.find().toArray()
+    app.get('/comment/:detailsDataId' , async (req ,res ) => {
+      const {detailsDataId} = req.params;
+      const result = await commentCollection.find({detailsDataId :detailsDataId}).toArray()
       res.send(result)
     })
 
 
-
-    
     // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!",
