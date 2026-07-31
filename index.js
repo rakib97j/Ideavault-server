@@ -87,9 +87,19 @@ async function run() {
     })
 
     // comment get api 
+    app.get('/comment' , async (req ,res) => {
+      const result = await commentCollection.find().toArray()
+      res.send(result)
+    })
     app.get('/comment/:detailsDataId' , async (req ,res ) => {
       const {detailsDataId} = req.params;
       const result = await commentCollection.find({detailsDataId :detailsDataId}).toArray()
+      res.send(result)
+    })
+    // my-Comment api
+    app.get('/my-comment/:userId' , async (req ,res ) => {
+      const {userId} = req.params;
+      const result = await commentCollection.find({userId :userId}).toArray()
       res.send(result)
     })
 
