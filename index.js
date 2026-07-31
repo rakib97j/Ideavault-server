@@ -86,6 +86,12 @@ async function run() {
       res.send(result)
     })
 
+    // comment get api 
+    app.get('/comment' , async (req ,res ) => {
+      const result = await commentCollection.find().toArray()
+      res.send(result)
+    })
+
 
 
     
