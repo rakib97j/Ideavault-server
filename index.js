@@ -113,6 +113,23 @@ async function run() {
       res.send(result)
     })
 
+    // comment edit/update api
+    app.patch("/comment/:id", async (req, res) => {
+ 
+
+    const { id } = req.params;
+    const { comment } = req.body;
+
+    const result = await commentCollection.updateOne(
+    { _id: new ObjectId(id) },
+    {
+      $set: { comment },
+    }
+  );
+
+  res.send(result);
+});
+
 
     // await client.db("admin").command({ ping: 1 });
     console.log(
