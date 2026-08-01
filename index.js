@@ -2,6 +2,7 @@ const express = require("express");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const dotenv = require("dotenv");
 const cors =require('cors');
+const { createRemoteJWKSet, jwtVerify } = require("jose-cjs");
 dotenv.config()
 const app = express();
 app.use(cors());
@@ -20,6 +21,36 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
+
+// verify token
+const JWKS = createRemoteJWKSet(
+  new URL("http://localhost:3000/api/auth/jwks")
+)
+
+
+
+const verifyToken = async (req ,res ,next) =>{
+  const authHeader = req?.headers.authorization
+  if(!authHeader){
+    return res.status(401).json({massage: "Unauthorized"})
+  }
+  const token = authHeader.split(" ")[1]
+    
+ if(!token){
+    return res.status(401).json({massage: "Unauthorized"})
+  }
+
+
+  try{
+    const {payload}  =await jwtVerify(token , JWKS)
+    next()
+
+  }catch (error) {
+    return res.status(403).json({massage: "Forbidden"})
+  } 
+}
+
+
 async function run() {
   try {
     await client.connect();
@@ -40,7 +71,7 @@ async function run() {
       res.send(result);
     });
     // user My idea delete
-    app.delete("/ideas/:id", async (req, res) => {
+    app.delete("/ideas/:id", verifyToken , async (req, res) => {
     const { id } = req.params;
     const result = await ideasCollection.deleteOne({_id :new ObjectId(id)});
 
@@ -48,8 +79,7 @@ async function run() {
     });
 
     //  my idea edit api
-
-    app.patch("/ideas/:id", async (req, res) => {
+    app.patch("/ideas/:id", verifyToken, async (req, res) => {
   const { id } = req.params;
   const updatedIdea = req.body;
 
@@ -94,14 +124,14 @@ async function run() {
   res.send(result);
 });
     
-    // details Api
-    app.get("/ideas/:ideaId" ,async (req ,res )=>{
+    //idea  details Api
+    app.get("/ideas/:ideaId" , verifyToken ,async (req ,res )=>{
       const {ideaId} = req.params;
       const result = await ideasCollection.findOne({_id :new ObjectId(ideaId)})
       res.send(result)
     })
     // add Data Api
-    app.post("/ideas" , async (req ,res) =>{
+    app.post("/ideas" , verifyToken, async (req ,res) =>{
       const ideasData = req.body;
       const result = await ideasCollection.insertOne(ideasData);
       res.send(result);
@@ -110,7 +140,7 @@ async function run() {
     // comment Api 
 
     // post api 
-    app.post('/comment', async (req ,res)=>{
+    app.post('/comment', verifyToken, async (req ,res)=>{
       const commentData =req.body;
       const result = await commentCollection.insertOne(commentData)
       res.send(result)
@@ -137,14 +167,14 @@ async function run() {
 
   //  comment delete api 
 
-    app.delete("/comment/:id" , async (req , res )=>{
+    app.delete("/comment/:id" ,  verifyToken , async (req , res )=>{
       const {id} = req.params;
       const result = await commentCollection.deleteOne({_id :new ObjectId(id)}) ;
       res.send(result)
     })
 
     // comment edit/update api
-    app.patch("/comment/:id", async (req, res) => {
+    app.patch("/comment/:id", verifyToken, async (req, res) => {
     const { id } = req.params;
     const { comment } = req.body;
 
