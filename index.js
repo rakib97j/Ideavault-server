@@ -46,6 +46,36 @@ async function run() {
 
     res.send(result);
     });
+
+    //  my idea edit api
+
+    app.patch("/ideas/:id", async (req, res) => {
+  const { id } = req.params;
+  const updatedIdea = req.body;
+
+  const filter = {
+    _id: new ObjectId(id),
+  };
+
+  const updateDoc = {
+    $set: {
+      title: updatedIdea.title,
+      shortDescription: updatedIdea.shortDescription,
+      detailedDescription: updatedIdea.detailedDescription,
+      category: updatedIdea.category,
+      tags: updatedIdea.tags,
+      imageUrl: updatedIdea.imageUrl,
+      budget: updatedIdea.budget,
+      targetAudience: updatedIdea.targetAudience,
+      problemStatement: updatedIdea.problemStatement,
+      proposedSolution: updatedIdea.proposedSolution,
+    },
+  };
+
+  const result = await ideasCollection.updateOne(filter, updateDoc);
+
+  res.send(result);
+});
     // search and short Api
    app.get("/idea", async (req, res) => {
   const search = req.query.search?.trim();
@@ -115,8 +145,6 @@ async function run() {
 
     // comment edit/update api
     app.patch("/comment/:id", async (req, res) => {
- 
-
     const { id } = req.params;
     const { comment } = req.body;
 
