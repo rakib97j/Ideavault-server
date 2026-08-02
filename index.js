@@ -24,7 +24,7 @@ const client = new MongoClient(uri, {
 
 // verify token
 const JWKS = createRemoteJWKSet(
-  new URL("http://localhost:3000/api/auth/jwks")
+  new URL(`${process.env.CLIENT_URL}/api/auth/jwks`)
 )
 
 
@@ -53,7 +53,7 @@ const verifyToken = async (req ,res ,next) =>{
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
     const db = client.db("idea_vault");
     const ideasCollection = db.collection("ideas")
     const commentCollection = db.collection('comment')
