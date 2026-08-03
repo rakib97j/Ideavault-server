@@ -105,24 +105,8 @@ async function run() {
   const result = await ideasCollection.updateOne(filter, updateDoc);
 
   res.send(result);
-});
-    // search and short Api
-   app.get("/idea", async (req, res) => {
-  const search = req.query.search?.trim();
-
-  const query = {};
-
-  if (search) {
-    query.$or = [
-      { title: { $regex: search, $options: "i" } },
-      { category: { $regex: search, $options: "i" } },
-    ];
-  }
-
-  const result = await ideasCollection.find(query).toArray();
-
-  res.send(result);
-});
+   });
+   
     
     //idea  details Api
     app.get("/ideas/:ideaId" , verifyToken ,async (req ,res )=>{
@@ -130,7 +114,7 @@ async function run() {
       const result = await ideasCollection.findOne({_id :new ObjectId(ideaId)})
       res.send(result)
     })
-    // add Data Api
+    // add idea Data Api
     app.post("/ideas" , verifyToken, async (req ,res) =>{
       const ideasData = req.body;
       const result = await ideasCollection.insertOne(ideasData);
@@ -188,6 +172,24 @@ async function run() {
   res.send(result);
 });
 
+ // search and short Api
+   app.get("/idea", async (req, res) => {
+  const search = req.query.search?.trim();
+
+  const query = {};
+
+  if (search) {
+    query.$or = [
+      { title: { $regex: search, $options: "i" } },
+      { category: { $regex: search, $options: "i" } },
+    ];
+  }
+
+  const result = await ideasCollection.find(query).toArray();
+
+  res.send(result);
+   });
+
 
     // await client.db("admin").command({ ping: 1 });
     console.log(
@@ -203,7 +205,7 @@ run().catch(console.dir);
 
 
 app.get("/", (req, res) => {
-  res.send("HLWWW");
+  res.send("server running fine");
 });
 
 app.listen(port, () => {
